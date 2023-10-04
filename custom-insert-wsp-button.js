@@ -88,14 +88,8 @@ if (typeof window.attach != 'undefined') {
           atm.util.appendCSS(css.join('\n'));
         },
         getUrlWhatsapp: (page) => {
-          let wsHref = '';
-          let path = window.location.pathname;
-
           let baseUrl = 'https://api.whatsapp.com/send/?phone=51991093638';
-
-          let origin = page.replaceAll('&', '%26');
-          origin = origin.replaceAll('=', '%3D');
-          wsHref = `${baseUrl}&text=Hola!%20Necesito%20ayuda%20con%20mi%20compra${origin}`;
+          return `${baseUrl}&text=Hola!%20Necesito%20ayuda%20con%20mi%20compra`;
         },
         insertButton: async () => {
           try {
@@ -103,8 +97,8 @@ if (typeof window.attach != 'undefined') {
 
             let page = window.location.href;
             let path = window.location.pathname;
-            let wsHref = me.fn.getUrlWhatsapp(page);
-
+            let wsHref = me.fn.getUrlWhatsapp();
+            console.log(wsHref);
             let template = `
               <div id="whatsapp_chat_container">
                 <a target="_blank" class="imageElementLink" href="${wsHref}"></a>
@@ -116,10 +110,10 @@ if (typeof window.attach != 'undefined') {
 
             if (wsHref) {
               body.insertAdjacentHTML('afterbegin', template);
+              console.log(template);
             }
 
             me.fn.insertCss(path);
-
             wsIconFn().run();
 
             window.dataLayer.push({
@@ -143,7 +137,7 @@ if (typeof window.attach != 'undefined') {
       run: function () {
         atm.util.seekFor(
           '#whatsapp_chat_container',
-          { tries: 8, delay: 150 }, // validar si ya existe el botón
+          { tries: 8, delay: 150 },
           function (referenceEls) {
             const referenceEL = referenceEls[0];
             const parent = referenceEL.parentNode;
@@ -155,22 +149,6 @@ if (typeof window.attach != 'undefined') {
           },
           function () {
             me.fn.insertButton();
-          }
-        );
-
-        atm.util.seekFor(
-          '.atm-modal-ficha-cel-content .atm-modal-focus-close > span',
-          { tries: 25, delay: 100 },
-          function (btnCloseEls) {
-            const btnClose = btnCloseEls[0];
-            btnClose.removeEventListener(
-              'click',
-              me.listeners.onClickCloseModalRecentView
-            );
-            btnClose.addEventListener(
-              'click',
-              me.listeners.onClickCloseModalRecentView
-            );
           }
         );
       },
